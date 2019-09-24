@@ -7,7 +7,9 @@ INPUTDATA_LIST <- "trymulti_glist.dat"
 
 ##OS系统下Mplus的路径
 Mplus_CMD <- "/Applications/Mplus/mplus"
+##WINDOWS系统用这个路径
 Mplus_CMD <- "D:/program/mplus/Mplus.exe"
+
 ##并发处理数
 NJOBS <- 8
 
@@ -23,15 +25,15 @@ G2flag <- "G1"
 G12flag <- "G12"
 
 hollyTips1 <- function(){
-  comm1 <- "
-     this is only a comment which you can ignore!
-     1、字符串变量后的复制不能带空格
-     2、diff指的matrix(G1_est) - matrix(G2_est)
-     3、ratio指的matrix(G1_est) / matrix(G2_est)
-     4、MplusAutomation.readModels(target=fileone)
-          中的文件路径最后不能带斜杠（windows os)
-          osx系统无此限制
-  "
+##  comm1 <- "
+##     this is only a comment which you can ignore!
+##     1、字符串变量后的复制不能带空格
+##     2、diff指的matrix(G1_est) - matrix(G2_est)
+##     3、ratio指的matrix(G1_est) / matrix(G2_est)
+##     4、MplusAutomation.readModels(target=fileone)
+##          中的文件路径最后不能带斜杠（windows os)
+##          osx系统无此限制
+##  "
 }
 
 lhresetWd <- function(){
