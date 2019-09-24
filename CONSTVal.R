@@ -7,7 +7,7 @@ INPUTDATA_LIST <- "trymulti_glist.dat"
 
 ##OS系统下Mplus的路径
 Mplus_CMD <- "/Applications/Mplus/mplus"
-
+Mplus_CMD <- "D:/program/mplus/Mplus.exe"
 ##并发处理数
 NJOBS <- 8
 
