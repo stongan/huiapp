@@ -1,6 +1,7 @@
+
 ## Author: Hui Li && Jinan Pang
 ## Last Updated: 23 Sep 2019
-## Email : 251689782@qq.com
+## Email : 251689782@qq.com 
 
 ##定义了一些常量、输入及输出等
 ##工具函数等
