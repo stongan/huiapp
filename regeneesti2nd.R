@@ -201,24 +201,8 @@ mainfunc2rd <- function(curpath, idx) {
     allret[cname[i]] <- as.vector(estlst)
     ##1-1 调用mplus生成模拟数据
     callMplus(estlst, cname[i], randomlst[i], curpath, idx)
-  }
-  foreach(i=1:length(names(paraG12)), .verbose=T, .export=funclst, .combine="c") %dopar% {
-    ##之后的函数调用设计改变路径，每个循环初始化路径
-    setwd(scriptpath)
-    ##取当前文件名字
-    curname <- names(paraG12)[i]
-    ##抽每个out文件的参数
-    estlst <- paraG12[[curname]]$parameters$unstandardized$est
     ##1-2 根据上面的模拟数据再跑一次模型
     callEstimate(estlst, cname[i], randomlst[i], curpath, idx)
-  }
-  foreach(i=1:length(names(paraG12)), .verbose=T, .export=funclst, .combine="c") %dopar% {
-    ##之后的函数调用设计改变路径，每个循环初始化路径
-    setwd(scriptpath)
-    ##取当前文件名字
-    curname <- names(paraG12)[i]
-    ##抽每个out文件的参数
-    estlst <- paraG12[[curname]]$parameters$unstandardized$est
     ##1-3 计算每一个G1diffG2
     G1diffG2(estlst, cname[i], randomlst[i], curpath, idx)
   }
