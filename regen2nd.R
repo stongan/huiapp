@@ -10,7 +10,7 @@ scriptpath <- SCRIPT_PATH
 setwd(scriptpath)
 njobs <- NJOBS
 cores <- detectCores(logical=F)
-cores <- detectCores()
+#cores <- detectCores()
 cl <- makeCluster(cores)
 registerDoParallel(cl, cores=cores)
 
@@ -178,13 +178,17 @@ mainfunc2rd <- function(curpath, idx) {
   scriptpath <- scriptpath
   ##拿一个样本来取每个文件的样本估计值的个数
   estlen <- length(paraG12[[1]]$parameters$unstandardized$est)
+  paralen <- length(names(paraG12))
   ##初始化一个列名的list
-  cname <- rep("NA",length(names(paraG12)))
+  cname <- rep("NA",paralen)
   ##初始化一个结果矩阵
   allret <- data.frame(matrix(NA,estlen,0))
   ##初始化一个随机数的list
-  randomlst <- c(sample(1000:100000, length(names(paraG12)), replace = F))
-  chunk.size <- length(names(paraG12))/cores + 1
+  randomlst <- c(sample(1000:100000, paralen, replace = F))
+  chunk.size <- paralen/cores
+  if (paralen %% cores > 0){
+    chunk.size <- chunk.size+1
+  }
   ##并发操作需要的函数,需要显示指定
   funclst <- c("callMplus","callEstimate","estimateCore","G1diffG2","G1dG2Core","NREPS")
   system.time(
@@ -192,7 +196,7 @@ mainfunc2rd <- function(curpath, idx) {
     {
     ##遍历路径下的每一个.out文件
       for(x in ((i-1)*chunk.size+1):(i*chunk.size)) {
-        if(x > length(names(paraG12))){
+        if(x > paralen){
           next
         }
         ##之后的函数调用设计改变路径，每个循环初始化路径
