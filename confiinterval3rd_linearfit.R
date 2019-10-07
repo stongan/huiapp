@@ -163,12 +163,14 @@ getMaxR2 <- function(){
       Ylst <- G1ratioG2[[curname]][1:Questionnum][-k]
       curname2 <- paste0(simupath,curname,"2/ratio.csv")
       data1 <- read.csv(curname2,header = TRUE)
+      data1 <- data1[,-1]
       Xlst <- 1.0:10.0
       ncol <- length(data1)
       for(ii in 1:Questionnum){
-        mean1 <- mean(data1[[ii]][1:ncol])
+        mean1 <- mean(unlist(data1[ii,1:ncol]))
         Xlst[ii] <- mean1
       }
+      #print (Xlst)
       Xlst <- Xlst[-k]
       relation <- lm(Ylst~Xlst)
       abc <- summary(relation)$adj.r.squared
