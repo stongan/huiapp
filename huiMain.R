@@ -19,3 +19,5 @@ lhresetWd()
 ##{estimateG1,2} -> {重新生成数据及模拟及G12的diff 和ratio}
 ##判断落在置信区间的比例以观测其的显著性
 source("confiinterval3rd.R")
+source("confiinterval3rd_divmedian.R")
+source("confiinterval3rd_linearfit.R")
