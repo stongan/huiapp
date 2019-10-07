@@ -14,7 +14,7 @@ Mplus_CMD <- "D:/program/mplus/Mplus.exe"
 NJOBS <- 8
 
 ##重复次数
-NREPS <- 1000
+NREPS <- 100
 
 ##dat2esti1st.R 用到的输出路径
 G1path_1st <- "/estimateG1"
@@ -23,6 +23,9 @@ G12path_1st <- "/estimateG12"
 G1flag <- "G1"
 G2flag <- "G1"
 G12flag <- "G12"
+
+##confiinterval3rd_divmedian.R用的常量
+Questionnum <- 10
 
 hollyTips1 <- function(){
 ##  comm1 <- "
