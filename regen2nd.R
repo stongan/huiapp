@@ -76,10 +76,11 @@ estimateCore <- function(lst1, fname, idx, f1, resfile) {
     INFORMATION = EXPECTED;",
     MODEL = "f1 by V1* V2-V10;
     f1@1;",
-    SAVEDATA = rettmp,
+#    SAVEDATA = rettmp,
     rdata = lst1)
   fit <- mplusModeler(pathmodel, modelout = retfile1, run = 1L)
   unlink(fit$results$input$data$file)
+  unlink(retfile1)
 }
 
 ##1-2 根据callMplus生成的模拟数据再跑一次模型

@@ -8,13 +8,13 @@
 source("CONSTVal.R")
 
 lhresetWd()
-#source("gendata.R")
+source("gendata.R")
 
 lhresetWd()
 ##从data1 -> {estimateG1,estimateG2,estimateG12}
 #source("dat2esti1st.R")
 #source("dat2esti1st_selectrefrent.R")
-source("dat2esti1st_selectrefrent_highversion.R")
+#source("dat2esti1st_selectrefrent_highversion.R")
 #source("dat2esti1st_selectrefrent_position.R")
 #source("dat2esti1st_selectrefrent_maxmincnt.R")
 

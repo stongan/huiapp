@@ -1,0 +1,22 @@
+TITLE:
+data generation;
+MONTECARLO:
+names=V1-V20;
+              nobs=300 300;
+              NGROUPS=2;
+              nreps=100;
+              seed=62244;
+              REPSAVE = ALL;
+              save = data*.dat;
+MODEL POPULATION:
+f1 by V1-V20*0.600000;
+
+             [V1-V20*0];
+             V1-V20*0.640000;
+             f1*1;
+            [f1*0];
+             
+             
+             
+OUTPUT:
+TECH1;

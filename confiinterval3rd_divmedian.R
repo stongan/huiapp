@@ -12,7 +12,8 @@ interval95H<-function(x,alpha){
   sdx<-sd(x)
   #n<-length(x)-1
   #interval_h <- xbar+qt(1-alpha/2,n-1)*sdx/sqrt(n)
-  interval_h<-xbar+1.96*sdx
+  #interval_h<-xbar+1.96*sdx
+  interval_h<-quantile(x,probs=0.975)
   return(interval_h)
 }
 interval95L<-function(x,alpha){
@@ -20,7 +21,8 @@ interval95L<-function(x,alpha){
   sdx<-sd(x)
   #n<-length(x)-1
   #interval_l <- xbar-qt(1-alpha/2,n-1)*sdx/sqrt(n)
-  interval_l<-xbar-1.96*sdx
+  #interval_l<-xbar-1.96*sdx
+  interval_l<-quantile(x,probs=0.025)
   return(interval_l)
 }
 
@@ -59,10 +61,15 @@ t_col <- length(G1ratioG2)
 G1ratioG2med <- G1ratioG2
 for(j in 1:t_col){
   lst1 <- G1ratioG2[1:Questionnum,j]
-  med1 <- median(lst1)
+  lst2<-sort(lst1,decreasing = FALSE)
+  print(lst1)
+  print(lst2)
+  med4<-lst2[((Questionnum/2)-1):((Questionnum/2)+2)]
+  print(med4)
+  med4mean <- mean(med4)
   #print (lst1)
   #print (med1)
-  G1ratioG2med[,j] <- G1ratioG2[,j] / med1
+  G1ratioG2med[,j] <- G1ratioG2[,j] / med4mean
 }
 write.csv(G1diffG2, file=paste0(scriptpath,"/estimateG1/g1diff.csv"))
 write.csv(G1ratioG2, file=paste0(scriptpath,"/estimateG1/g1ratio.csv"))

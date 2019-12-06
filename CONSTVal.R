@@ -1,31 +1,53 @@
 SCRIPT_PATH <- getwd()
 
 ##输入数据，为了保证程序的可读性及友好，请在此设置输入数据，不客气！！！
-INPUTDATA <- "./data1/"
+INPUTDATA <- "./gendata/"
 ##输入数据的list
-INPUTDATA_LIST <- "trymulti_glist.dat"
+INPUTDATA_LIST <- "datalist.dat"
 
 ##OS系统下Mplus的路径
 Mplus_CMD <- "/Applications/Mplus/mplus"
 ##WINDOWS系统用这个路径
-Mplus_CMD <- "D:/program/mplus/Mplus.exe"
+#Mplus_CMD <- "D:/program/mplus/Mplus.exe"
+##LINUX
+#Mplus_CMD <- "/opt/mplus/8.3/mplus"
+##重复次数
+NREPS_Gendata <- 500
+EFFECTSIZE_Gendata <- 0
+EFFECTSIZE_lst <- ""
 
 ##并发处理数
-NJOBS <- 8
+NJOBS <- 50
 
 ##重复次数
-NREPS <- 100
+NREPS <- 1000
+
+##样本量
+
 
 ##dat2esti1st.R 用到的输出路径
 G1path_1st <- "/estimateG1"
 G2path_1st <- "/estimateG2"
 G12path_1st <- "/estimateG12"
+
+SeleRefpath_1st <- "/selectreferent"
+SeleRefMinG1_1st <- "/refestimateG1"
+SeleRefMinG2_1st <- "/refestimateG2"
+SeleRefMinG12_1st <- "/refestimateG12"
+
 G1flag <- "G1"
 G2flag <- "G1"
 G12flag <- "G12"
 
 ##confiinterval3rd_divmedian.R用的常量
-Questionnum <- 10
+##dat1st.R regen..2rd.R 均用了以下参数
+Questionnum <- 20
+Factornum <- 1
+HasInterception <- 1
+HasFactormean <- 1
+NGroup1st <- 2
+Group1_samplesize <- 300
+Group2_samplesize <- 300
 
 hollyTips1 <- function(){
 ##  comm1 <- "
@@ -38,6 +60,11 @@ hollyTips1 <- function(){
 ##          osx系统无此限制
 ##  "
 }
+
+getFactorCorr <- function(){
+  return (Factornum*(Factornum-1)/2)
+}
+print (getFactorCorr())
 
 lhresetWd <- function(){
   comm1 <- "

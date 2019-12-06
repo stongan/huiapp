@@ -3,6 +3,7 @@
 
 ##依赖包及工作路径的初始化
 library(MplusAutomation)
+Mplus_CMD <- "/opt/mplus/8.3/mplus"
 Mplus_command <- Mplus_CMD
 scriptpath <- SCRIPT_PATH
 setwd(scriptpath)
@@ -12,7 +13,7 @@ interval95H<-function(x,alpha){
   sdx<-sd(x)
   #n<-length(x)-1
   #interval_h <- xbar+qt(1-alpha/2,n-1)*sdx/sqrt(n)
-  interval_h<-xbar+1.96*sdx
+  interval_h<-quantile(x,probs=0.975,na.rm = TRUE)
   return(interval_h)
 }
 interval95L<-function(x,alpha){
@@ -20,7 +21,7 @@ interval95L<-function(x,alpha){
   sdx<-sd(x)
   #n<-length(x)-1
   #interval_l <- xbar-qt(1-alpha/2,n-1)*sdx/sqrt(n)
-  interval_l<-xbar-1.96*sdx
+  interval_l<-quantile(x,probs=0.025,na.rm = TRUE)
   return(interval_l)
 }
 
@@ -28,7 +29,6 @@ interval95L<-function(x,alpha){
 extraEst <- function(curpath, idx) {
   fileout <- paste0(getwd(),curpath) 
   paraG12 <- readModels(fileout,recursive =TRUE, what="all")
-  
   estlen <- length(paraG12[[1]]$parameters$unstandardized$est)
   cname <- rep("NA",length(names(paraG12)))
   allret <- data.frame(matrix(NA,estlen,0))
@@ -46,17 +46,6 @@ extraEst <- function(curpath, idx) {
   write.csv(allret, file=retfile)
   return (allret)
 }
-
-##main逻辑开始
-##genefirstG1 <- function(){
-##做数据抽取并保存
-G1df <- extraEst(G1path_1st, "G1")
-G2df <- extraEst(G2path_1st, "G2")
-G1diffG2 <- G1df - G2df
-G1ratioG2 <- G1df / G2df
-write.csv(G1diffG2, file=paste0(scriptpath,"/estimateG1/g1diff.csv"))
-write.csv(G1ratioG2, file=paste0(scriptpath,"/estimateG1/g1ratio.csv"))
-##}
 
 helperH <- function(tdata){
   retlst <- c()
@@ -80,6 +69,7 @@ helperL <- function(tdata){
   #print (retlst)
   return (retlst)
 }
+
 getG12HLinterval <- function(){
   simupath <- paste0(scriptpath,"/estimateG12/simulatedata/")
   alst <- list.files(simupath)
@@ -115,8 +105,15 @@ getG12HLinterval <- function(){
   write.csv(retdiffL, file=paste0(scriptpath,"/estimateG1/g12diffL.csv"))
   write.csv(retratioH, file=paste0(scriptpath,"/estimateG1/g12ratioH.csv"))
   write.csv(retratioL, file=paste0(scriptpath,"/estimateG1/g12ratioL.csv"))
-  
-  alen2 <- length(retratioL)
+
+
+  G1diffG2 <- read.csv(paste0(scriptpath,"/estimateG1/g1diff.csv"),header = TRUE)
+  G1ratioG2 <- read.csv(paste0(scriptpath,"/estimateG1/g1ratio.csv"),header = TRUE)
+  G1diffG2sort <- G1diffG2[,order(names(G1diffG2))]
+  G1diffG2 <- G1diffG2sort
+  print (G1diffG2)
+
+  alen2 <- length(retdiffL)
   compareretdiff <- data.frame(matrix(0,alen,alen2))
   compareretratio <- data.frame(matrix(0,alen,alen2))
   for(i in 1:alen){
@@ -124,9 +121,9 @@ getG12HLinterval <- function(){
       if(G1diffG2[i,j] >= retdiffL[i,j] && G1diffG2[i,j] <= retdiffH[i,j]){
         compareretdiff[i,j] <- 1
       }
-      if(G1ratioG2[i,j] >= retratioL[i,j] && G1ratioG2[i,j] <= retratioH[i,j]){
-        compareretratio[i,j] <- 1
-      }
+      #if(G1ratioG2[i,j] >= retratioL[i,j] && G1ratioG2[i,j] <= retratioH[i,j]){
+      #  compareretratio[i,j] <- 1
+      #}
     }
   }
   print (compareretdiff)
