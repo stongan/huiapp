@@ -6,11 +6,15 @@ INPUTDATA <- "./gendata/"
 INPUTDATA_LIST <- "datalist.dat"
 
 ##OS系统下Mplus的路径
-#Mplus_CMD <- "/Applications/Mplus/mplus"
+Mplus_CMD <- "/Applications/Mplus/mplus"
 ##WINDOWS系统用这个路径
 #Mplus_CMD <- "D:/program/mplus/Mplus.exe"
 ##LINUX
-Mplus_CMD <- "/opt/mplus/8.3/mplus"
+#Mplus_CMD <- "/opt/mplus/8.3/mplus"
+##重复次数
+NREPS_Gendata <- 100
+EFFECTSIZE_Gendata <- 0
+EFFECTSIZE_lst <- "1 2"
 
 ##并发处理数
 NJOBS <- 50
@@ -37,7 +41,7 @@ G12flag <- "G12"
 
 ##confiinterval3rd_divmedian.R用的常量
 ##dat1st.R regen..2rd.R 均用了以下参数
-Questionnum <- 15
+Questionnum <- 20
 Factornum <- 1
 HasInterception <- 1
 HasFactormean <- 1

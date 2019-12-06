@@ -264,6 +264,36 @@ getModelHeader<-function(cQuesNum, cFactorNum){
   return (list(ret,ret2))
 }
 
+getModelHeader_gendata<-function(cQuesNum, cFactorNum, typefactor){
+  len1 <- as.integer(cQuesNum/cFactorNum)
+  ret <- ""
+  ret2 <- ""
+  template <- "f%d by V%d-V%d*%f;\n"
+  template2 <- "f%d by V%d-V%d(L%d-L%d);\n"
+  for(i in 1:cFactorNum){
+    cur <- sprintf(template, i, ((i-1)*len1+1), (i*len1), typefactor)
+    ret <- paste0(ret,cur)
+    cur2 <- sprintf(template2, i, ((i-1)*len1+1), (i*len1), ((i-1)*len1+1), (i*len1))
+    ret2 <- paste0(ret2,cur2)
+  }
+  return (list(ret,ret2))
+}
+
+getModelHeader2_gendata<-function(cQuesNum, cFactorNum, typefactor){
+  len1 <- as.integer(cQuesNum/cFactorNum)
+  ret <- ""
+  template <- "f%d with f%d*%f;\n"
+  if(cFactorNum>1){
+    for (i in 2:cFactorNum) {
+      for (j in 1:(i-1)) {
+        tt <- sprintf(template, i, j, typefactor)
+        ret <- paste0(ret,tt)
+      }
+    }
+  }
+  return (ret)
+}
+
 selectreferent_perfactor_multifactor<-function(cQuesNum, cFactorNum, interceptidxlst){
   retmodel <- ""
   template1 <- "
