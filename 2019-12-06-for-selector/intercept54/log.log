@@ -1,0 +1,20 @@
+[1] 0
+
+Running model: gendata.inp 
+System command: cd "." && "mplus" "gendata.inp" 
+Reading model:  gendata.out 
+[1] "60 3 3 60 3 60"
+[1] "cccursize"
+[1] 189
+discovered package(s): 
+automatically exporting the following variables from the local environment:
+  allfactor_minlst, curpath, datapath, dodiffbyparam1st, estForSelect1st, Factornum, getModelHeader, interactionnum, Questionnum, selectreferent_perfactor, selectreferent_perfactor_helper, selectreferent_perfactor_merge_0, selectreferent_perfactor_multi_helper, selectreferent_perfactor_multifactor, selerefg1, selerefg12, selerefpath, sepAndMergeEst1st, tmatrix 
+explicitly exporting variables(s): NREPS, loadingnum, factormeannum, interceptnum, varinum, residualnum, HasInterception, HasFactormean, NGroup1st, Group1_samplesize, Group2_samplesize, getFactorCorr, getdiff1st, dodiff
+explicitly exporting package(s): 
+numValues: 2, numResults: 0, stopped: TRUE
+accumulate got an error result
+numValues: 2, numResults: 1, stopped: TRUE
+returning status FALSE
+numValues: 2, numResults: 2, stopped: TRUE
+not calling combine function due to errors
+returning status TRUE
