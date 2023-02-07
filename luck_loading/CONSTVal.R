@@ -17,7 +17,7 @@ EFFECTSIZE_Gendata <- 0
 EFFECTSIZE_lst <- ""
 
 ##并发处理数
-NJOBS <- 20
+NJOBS <- 5
 
 ##二次模拟重复次数
 NREPS <- 1000
@@ -41,10 +41,10 @@ G12flag <- "G12"
 
 ##confiinterval3rd_divmedian.R用的常量
 ##dat1st.R regen..2rd.R 均用了以下参数
-Questionnum <- 20
-Factornum <- 2
-HasInterception <- 0
-HasFactormean <- 0
+Questionnum <- 15
+Factornum <- 3
+HasInterception <- 1
+HasFactormean <- 1
 NGroup1st <- 2
 Group1_samplesize <- 300
 Group2_samplesize <- 300

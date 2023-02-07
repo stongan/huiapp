@@ -58,6 +58,9 @@ hollyTips1 <- function(){
 ##     4、MplusAutomation.readModels(target=fileone)
 ##          中的文件路径最后不能带斜杠（windows os)
 ##          osx系统无此限制
+##     5、linux系统更新命令：
+##	  update.packages(checkBuilt=TRUE, ask=FALSE)
+##
 ##  "
 }
 
