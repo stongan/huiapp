@@ -43,6 +43,8 @@ GetDataInfo <- function(lavvan_class_info) {
   var_graph_info <- HGraphClass()
   var_graph_info$init(ainfo$edge, ainfo$union_var)
   var_graph_info$CreateGraph()
+  var_graph_info$TravelGraph()
+  #var_graph_info$PlotGraph()
   ainfo <- append(ainfo, list(var_graph_info=var_graph_info))
   #y4 <- append(x1,x2,after = 2)
   return (ainfo)
