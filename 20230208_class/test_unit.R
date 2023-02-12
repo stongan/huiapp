@@ -1,5 +1,5 @@
 
-head(PoliticalDemocracy)
+head(lavaan::PoliticalDemocracy)
 ## The industrialization and Political Democracy Example
 ## Bollen (1989), page 332
 model <- '
@@ -22,7 +22,7 @@ y2 ~~ y4 + y6
 y3 ~~ y7
 y4 ~~ y8
 y6 ~~ y8 '
-fit <- lavaan::sem(model, data = PoliticalDemocracy)
+fit <- lavaan::sem(model, data = lavaan::PoliticalDemocracy)
 
 
 model <- '
@@ -58,8 +58,13 @@ y6 ~~ y8'
 fit <- lavaan::sem(model, data = PoliticalDemocracy)
 
 source("./DataInfo.R")
-dfm <- GetDataInfo(fit, PoliticalDemocracy)
-gi <- dfm$var_graph_info$graphInfo
+dfm <- GetDataInfo(fit, lavaan::PoliticalDemocracy)
+
+w <- dfm$weighInfo
+r <- dfm$simulateExoVarQuote
+i <- dfm$simulateExoVar
+
+mid_travel <- dfm$mid_graph_info$traveBfsList
 model2 <- paste0(model, dfm$toAddWavyStr)
 fit2 <- lavaan::sem(model2, data = PoliticalDemocracy)
 dfm2 <- GetDataInfo(fit2, PoliticalDemocracy)

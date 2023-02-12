@@ -24,15 +24,17 @@ HGraphNode <- setRefClass("HGraphNode",
 )
 
 HGraphClass <- setRefClass("HGraphClass",
-  fields=list(edgeMat    = "matrix", ## main member
-              varList    = "vector",
-              nVar       = "numeric",
-              name2id    = "list",
-              graphInfo  = "list",
-              travelList = "list",
-              reachable  = "matrix",
-              visited    = "vector", ## help member
-              colleList  = "vector")
+  fields=list(edgeMat      = "matrix", ## main member
+              varList      = "vector",
+              nVar         = "numeric",
+              name2id      = "list",
+              graphInfo    = "list",
+              travelList   = "list",
+              reachable    = "matrix",
+              traveBfsList = "vector",
+              visited      = "vector", ## help member
+              colleListBFS = "vector",
+              colleList    = "vector")
 )
 HGraphClass$methods(
   init = function(edgeMat_t, var_list_t) {
@@ -139,6 +141,59 @@ TravelGraph = function() {
 })
 
 HGraphClass$methods(
+PrintTravelListBFS = function() {
+  print (paste(rep('-',50), collapse=""))
+  print ("PrintTravelListBFS")
+  print (paste(traveBfsList, collapse="->"))
+  print (paste(rep('-',50), collapse=""))
+})
+
+HGraphClass$methods(
+IsAllParentVisited = function(t_name, t_parent) {
+  if (length(t_parent) > 0) {
+    for (i in 1:length(t_parent)) {
+      parent_name <- t_parent[i]
+      parent_id   <- name2id[[parent_name]]
+      if (!visited[parent_id]) {
+        return (FALSE)
+      }
+    }
+  }
+  return (TRUE)
+})
+
+HGraphClass$methods(
+TravelGraphBFS = function() {
+    #init
+    visited      <<- rep(FALSE, nVar)
+    colleListBFS <<- vector(mode = "character", length = 0)
+    traveBfsList <<- vector(mode = "character", length = 0)
+    for(i in 1:nVar) {
+      if (graphInfo[[i]]$isStart) {
+        colleListBFS <<- c(colleListBFS, graphInfo[[i]]$name)
+      }
+    }
+    while(length(colleListBFS) > 0) {
+      curListBFS <- colleListBFS
+      colleListBFS <<- vector(mode = "character", length = 0)
+      if (length(curListBFS) > 0) {
+        for (i in 1:length(curListBFS)) {
+          cur_name <- curListBFS[i]
+          cur_id   <- name2id[[cur_name]]
+          if (!visited[cur_id] && IsAllParentVisited(cur_name, graphInfo[[cur_id]]$parent)) {
+            traveBfsList    <<- c(traveBfsList, cur_name)
+            visited[cur_id] <<- TRUE
+          }
+          if (length(graphInfo[[cur_id]]$children) > 0) {
+            colleListBFS <<- c(colleListBFS, graphInfo[[cur_id]]$children)
+          }
+        }
+      }
+    }
+    PrintTravelListBFS()
+})
+
+HGraphClass$methods(
 PlotGraph = function() {
   library(igraph)
   plot_str <- vector(mode = "character", length = 0)
@@ -172,5 +227,6 @@ Runner = function(t_edgeinfo, t_all_var) {
   init(t_edgeinfo, t_all_var)
   CreateGraph()
   TravelGraph()
+  TravelGraphBFS()
   #PlotGraph()
 })

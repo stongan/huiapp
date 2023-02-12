@@ -160,15 +160,17 @@ GetSimulateExoVar = function() {
 
 HDataInfo$methods(
 GetMidCalMatrix = function() {
-  n_mid <- length(mid_var)
+  # use mid_graph's BFS result to cal
+  mid_travel <- mid_graph_info$traveBfsList
+  n_mid <- length(mid_travel)
   n_row <- length(originData[, 1])
-  mid_cal_matrix <<- matrix(0, n_row, n_mid, dimnames = list(rep(1:n_row), mid_var))
+  mid_cal_matrix <<- matrix(0, n_row, n_mid, dimnames = list(rep(1:n_row), mid_travel))
   graphInfo <- var_graph_info$graphInfo
   name2id <- var_graph_info$name2id
 
   # cal each mid_var's M_matrix
   for(i in 1:n_mid) {
-    cur_mid    <- mid_var[i]
+    cur_mid    <- mid_travel[i]
     cur_id     <- name2id[[cur_mid]]
     cur_node   <- graphInfo[[cur_id]]
     cur_parent <- cur_node$parent
@@ -176,11 +178,51 @@ GetMidCalMatrix = function() {
       for(j in 1:length(cur_parent)) {
         parent_name <- cur_parent[j]
         weight <- weighInfo[parent_name, cur_mid]
-        mid_cal_matrix[, cur_mid] <<- mid_cal_matrix[, cur_mid] + weight * simulateExoVar[, parent_name]
+        if (parent_name %in% mid_travel) { # parent is mid_var
+          mid_cal_matrix[, cur_mid] <<- mid_cal_matrix[, cur_mid] + weight * mid_cal_matrix[, parent_name]
+        } else { # parent is x_var
+          mid_cal_matrix[, cur_mid] <<- mid_cal_matrix[, cur_mid] + weight * simulateExoVar[, parent_name]
+        }
       } # end for-inner
     } # end if
     mid_cal_matrix[, cur_mid] <<- mid_cal_matrix[, cur_mid] + simulateExoVar[, cur_mid]
   } # end for-outer
+})
+
+HDataInfo$methods(
+CalSimulateExoVarQuote = function() {
+  # accord to DFS chain cal each mid_var's simulateExoVarQuote
+  # init
+  simulateExoVarQuote <<- simulateExoVar
+  ## DFS:
+  ## chain1 : "dem60->(w1)->dem61->(w2)->dem63"
+  ## chain2 : "dem62->(w3)->dem63"
+  ## if start dem60_quote = dem60; dem62_quote = dem62
+  ## else chain ∑ demi*wi
+  ##     dem61_quote = dem61 + dem60 * w1
+  ##     dem63_quote = dem63 + dem62 * w3 + (dem60*w1 + dem61) * w2
+  ## simulateExoVarQuote = simulateExoVarQuote + cal_chain_matrix_1 * w3 + cal_chain_matrix_2 * w2
+  cal_chain_matrix    <- simulateExoVar
+  cal_chain_matrix[,] <- 0
+  cur_travelList      <- mid_graph_info$travelList
+  n_chain             <- length(cur_travelList)
+  if (n_chain > 0) {
+    for (i in 1:n_chain) {
+      cal_chain_matrix[,] <- 0
+      one_travelList      <- cur_travelList[[i]]
+      if (length(one_travelList) > 1) {
+        for (j in 2:length(one_travelList)) {
+          pre_node   <- one_travelList[j-1]
+          now_node   <- one_travelList[j]
+          weight_p_2_n <- weighInfo[pre_node, now_node]
+          cal_chain_matrix[, now_node] <- weight_p_2_n * (cal_chain_matrix[, pre_node] + simulateExoVar[, pre_node])
+        }
+      }
+      simulateExoVarQuote <<- simulateExoVarQuote + cal_chain_matrix
+    }
+  } else {
+    print ("INFO:[CalSimulateExoVarQuote]: mid_var only has one")
+  }
 })
 
 GetDataInfo <- function(lavvan_class_info, origin_data) {
@@ -203,5 +245,6 @@ GetDataInfo <- function(lavvan_class_info, origin_data) {
   
   ainfo$AddDoubleWavy()
   ainfo$GetMidCalMatrix()
+  ainfo$CalSimulateExoVarQuote()
   return (ainfo)
 }
