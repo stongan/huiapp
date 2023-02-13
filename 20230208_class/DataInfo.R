@@ -225,6 +225,57 @@ CalSimulateExoVarQuote = function() {
   }
 })
 
+HDataInfo$methods(
+CalMidCalMatrixQuoteList = function() {
+  # init
+  mid_travel <- mid_graph_info$traveBfsList
+  n_mid <- length(mid_travel)
+  for(i in 1:n_mid) {
+    mid_cal_matrixQuoteList[[mid_travel[i]]] <<- mid_cal_matrix
+  }
+  
+  # effect after Mi 
+  ## when interest dem60 cal the effect on dem61 and dem63
+  ## DFS:
+  ## chain1 : "ind60->(w0)->dem60->(w1)->dem61->(w2)->dem63"
+  ## chain2 : "ind60->(w3)->dem62->(w4)->dem63"
+  cur_travelList  <- var_graph_info$travelList
+  n_chain         <- length(cur_travelList)
+  t_cal_matrix    <- mid_cal_matrix
+  t_cal_matrix[,] <- 0
+  if (n_chain > 0) {
+    for (i in 1:n_chain) {
+      t_cal_matrix[,]    <- 0     # set as 0 matrix
+      one_travelList     <- cur_travelList[[i]]
+      x_name_chain       <- one_travelList[1]
+      accumulateWeight   <- 1
+      one_travelList_mid <- one_travelList[-length(one_travelList)][-1] # only has mid_var, delete x and y
+      if (length(one_travelList_mid) > 2) { 
+        for (j in 1:length(one_travelList_mid)) { # the last mid not effect other m , no need consider
+          pre_node         <- x_name_chain
+          if (j > 1) {
+            pre_node       <- one_travelList_mid[j-1]
+          }
+          now_node         <- one_travelList_mid[j]
+          weight_p_2_n     <- weighInfo[pre_node, now_node]
+          accumulateWeight <- accumulateWeight * weight_p_2_n
+          t_cal_matrix[, now_node] <- accumulateWeight * simulateExoVar[, x_name_chain]
+        }
+        # now_node effect next_node
+        ## cal j value effect k value
+        for (j in 1:(length(one_travelList_mid)-1)) {
+          now_node         <- one_travelList_mid[j]
+          for (k in (j+1):length(one_travelList_mid)) {
+            next_node      <- one_travelList_mid[k]
+            mid_cal_matrixQuoteList[[now_node]][, next_node] <<- mid_cal_matrixQuoteList[[now_node]][, next_node] - t_cal_matrix[, next_node]
+          }
+        }
+      }
+    }
+  }
+  
+})
+
 GetDataInfo <- function(lavvan_class_info, origin_data) {
   ainfo         <- HDataInfo()
   #myParTable <- lavaan::parTable(lavvan_class_info)
@@ -246,5 +297,6 @@ GetDataInfo <- function(lavvan_class_info, origin_data) {
   ainfo$AddDoubleWavy()
   ainfo$GetMidCalMatrix()
   ainfo$CalSimulateExoVarQuote()
+  ainfo$CalMidCalMatrixQuoteList()
   return (ainfo)
 }

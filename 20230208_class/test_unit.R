@@ -64,6 +64,15 @@ w <- dfm$weighInfo
 r <- dfm$simulateExoVarQuote
 i <- dfm$simulateExoVar
 
+w <- dfm$weighInfo
+r <- dfm$mid_cal_matrixQuoteList[['dem60']]
+i <- dfm$simulateExoVar
+m <- dfm$mid_cal_matrix
+m[1, 'dem61'] - w['dem60','dem61'] * w['ind60','dem60'] * i[1, 'ind60']
+r[1, 'dem61']
+m[1, 'dem63'] - w['dem61','dem63'] * w['dem60','dem61'] * w['ind60','dem60'] * i[1, 'ind60']
+r[1, 'dem63']
+
 mid_travel <- dfm$mid_graph_info$traveBfsList
 model2 <- paste0(model, dfm$toAddWavyStr)
 fit2 <- lavaan::sem(model2, data = PoliticalDemocracy)
