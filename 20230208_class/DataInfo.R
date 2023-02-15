@@ -154,7 +154,7 @@ GetSimulateExoVar = function() {
     simulateExoVar <<- MASS::mvrnorm(n = cur_n_sample,
                          cur_x_mid_mean, cur_x_mid_covarInfo, empirical = T)
   } else {
-    stop("x_mid_covarInfo is not a positive definite matrix")
+    warning("Warning:x_mid_covarInfo is not a positive definite matrix")
   }
 })
 
@@ -273,30 +273,63 @@ CalMidCalMatrixQuoteList = function() {
       }
     }
   }
-  
 })
 
-GetDataInfo <- function(lavvan_class_info, origin_data) {
-  ainfo         <- HDataInfo()
-  #myParTable <- lavaan::parTable(lavvan_class_info)
-  myParTable    <- lavaan::parameterEstimates(lavvan_class_info, rsquare = TRUE)
-  x2yinfo       <- myParTable[which(myParTable$op == '~'), c('lhs', 'rhs', 'est')]
-  x2yinfo_covar <- myParTable[which(myParTable$op == '~~'), c('lhs', 'rhs', 'est')]
-  x2yinfo_r2    <- myParTable[which(myParTable$op == 'r2'), c('lhs', 'rhs', 'est')]
-  ainfo$GetVarOfProperty(lavvan_class_info, origin_data)
-  ainfo$GetMatriOfPath(x2yinfo)
-  ainfo$GetCovar(x2yinfo_covar)
-  ainfo$GetR2(x2yinfo_r2)
-  ainfo$GetSimulateExoVar()
-  
-  ainfo$var_graph_info$Runner(ainfo$edgeInfo, ainfo$all_var)
-  if (length(ainfo$mid_var) > 1) {
-    ainfo$mid_graph_info$Runner(ainfo$midEdgeInfo, ainfo$mid_var)
+HDataInfo$methods(
+CalYHatEx = function() {
+  n_x_mid <- length(x_mid_var)
+  y_name  <- y_var[1]
+  x_mid_2_y_weight <- setNames(as.list(rep(0,n_x_mid)), x_mid_var)
+  for (i in 1:n_x_mid) {
+    if (!is.na(weighInfo[x_mid_var[i], y_name])) {
+      x_mid_2_y_weight[x_mid_var[i]] <- weighInfo[x_mid_var[i], y_name]
+    }
   }
   
-  ainfo$AddDoubleWavy()
-  ainfo$GetMidCalMatrix()
-  ainfo$CalSimulateExoVarQuote()
-  ainfo$CalMidCalMatrixQuoteList()
-  return (ainfo)
-}
+  y_hat_ex <<- list()
+  y_hat_ex_variance <<- list()
+  y_hat_ex_r2 <<- list()
+  ## case 1 : interest M1 and in y_function then M1 use em_quote, other use M_quote
+  ## case 2 : interest M1 and not in y_function , all use M_quote
+  ## case 3 : interest ALL, all use em_quote
+  n_mid <- length(mid_var)
+  for(i in 1:n_mid) {
+    ## em' is simulateExoVarQuote   to interest
+    ## m'  is cur_mid_quote_matrix  to other
+    ## cal y_hat_ex by em' and m' and x_mid_2_y_weight
+    interest_name <- mid_var[i]
+    y_hat_ex[[interest_name]] <<- rep(0.0, length(originData[, 1]))
+    cur_mid_quote_matrix <- mid_cal_matrixQuoteList[[mid_var[i]]]
+    
+    for (j in 1:n_x_mid) {
+      j_name <- x_mid_var[j]
+      j_w    <- x_mid_2_y_weight[[j_name]]
+      if ((j_name %in% x_var) || (j_name == interest_name)) { ## x or interestM use em'
+        y_hat_ex[[interest_name]] <<- y_hat_ex[[interest_name]] + j_w * simulateExoVarQuote[, j_name]
+      } else { ## oterh use m'
+        y_hat_ex[[interest_name]] <<- y_hat_ex[[interest_name]] + j_w * cur_mid_quote_matrix[, j_name]
+      }
+    } # end for-inner
+    y_hat_ex_variance[[interest_name]] <<- var(y_hat_ex[[interest_name]])
+    y_hat_ex_r2[[interest_name]] <<- y_hat_ex_variance[[interest_name]] / y_get_variance
+  } # end for-outer
+    
+  ## if user interest ALL m, use em'
+  y_hat_ex[["ALL"]] <<- rep(0.0, length(originData[, 1]))
+  for (k in 1:n_x_mid) {
+    k_name <- x_mid_var[k]
+    k_w    <- x_mid_2_y_weight[[k_name]]
+    y_hat_ex[["ALL"]] <<- k_w * simulateExoVarQuote[, k_name]
+  }
+  y_hat_ex_variance[["ALL"]] <<- var(y_hat_ex[["ALL"]])
+  y_hat_ex_r2[["ALL"]] <<- y_hat_ex_variance[["ALL"]] / y_get_variance
+  
+  r2name <- c(mid_var, "ALL")
+  c2name <- c("R2_S", "R2_(M)", "delta_R2")
+  delta_r2_matrix <<- matrix(NA, length(r2name), 3, dimnames = list(r2name, c2name))
+  for(i in 1:length(r2name)) {
+    delta_r2_matrix[r2name[i], c2name[1]] <<- y_r2
+    delta_r2_matrix[r2name[i], c2name[2]] <<- y_hat_ex_r2[[r2name[i]]]
+    delta_r2_matrix[r2name[i], c2name[3]] <<- y_r2 - y_hat_ex_r2[[r2name[i]]]
+  }
+})

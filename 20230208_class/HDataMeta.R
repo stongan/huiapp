@@ -32,5 +32,9 @@ HDataMeta <- setRefClass("HDataMeta",
     simulateExoVar          = "ANY",
     simulateExoVarQuote     = "ANY",
     mid_cal_matrix          = "matrix",
-    mid_cal_matrixQuoteList = "list"
+    mid_cal_matrixQuoteList = "list",
+    y_hat_ex                = "list",
+    y_hat_ex_variance       = "list",
+    y_hat_ex_r2             = "list",
+    delta_r2_matrix         = "matrix"
 ))

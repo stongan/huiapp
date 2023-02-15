@@ -136,7 +136,7 @@ TravelGraph = function() {
       DFS(i)
     }
   }
-  PrintTravelList()
+  #PrintTravelList()
   #print ("end TravelGraph")
 })
 
@@ -190,7 +190,7 @@ TravelGraphBFS = function() {
         }
       }
     }
-    PrintTravelListBFS()
+    #PrintTravelListBFS()
 })
 
 HGraphClass$methods(

@@ -39,7 +39,7 @@ y2 ~~ y4 + y6
 y3 ~~ y7
 y4 ~~ y8
 y6 ~~ y8'
-fit <- lavaan::sem(model, data = PoliticalDemocracy)
+fit <- lavaan::sem(model, data = lavaan::PoliticalDemocracy)
 
 model <- '
 # latent variable definitions
@@ -55,15 +55,17 @@ y2 ~~ y4 + y6
 y3 ~~ y7
 y4 ~~ y8
 y6 ~~ y8'
-fit <- lavaan::sem(model, data = PoliticalDemocracy)
+fit <- lavaan::sem(model, data = lavaan::PoliticalDemocracy)
 
 source("./DataInfo.R")
 dfm <- GetDataInfo(fit, lavaan::PoliticalDemocracy)
 
+# test case 1
 w <- dfm$weighInfo
 r <- dfm$simulateExoVarQuote
 i <- dfm$simulateExoVar
 
+# test case 2
 w <- dfm$weighInfo
 r <- dfm$mid_cal_matrixQuoteList[['dem60']]
 i <- dfm$simulateExoVar
@@ -73,12 +75,28 @@ r[1, 'dem61']
 m[1, 'dem63'] - w['dem61','dem63'] * w['dem60','dem61'] * w['ind60','dem60'] * i[1, 'ind60']
 r[1, 'dem63']
 
+# test case 3
+a <- dfm$y_hat_ex
+b <- dfm$y_hat_ex_variance
+
+# test case 4
 mid_travel <- dfm$mid_graph_info$traveBfsList
 model2 <- paste0(model, dfm$toAddWavyStr)
 fit2 <- lavaan::sem(model2, data = PoliticalDemocracy)
 dfm2 <- GetDataInfo(fit2, PoliticalDemocracy)
 
+# test case 5
 b <- lavaan::parameterEstimates(fit, rsquare = TRUE)
 c <- dfm$simulateExoVar
 j <- 0.3*c[,"dem60"] + 0.2*c[, "dem61"]
 c[1, "dem60"]
+
+# test case 6
+source("./DeltaOptimal.R")
+a <- deltaR2(lavaan::PoliticalDemocracy, model, "")
+a <- deltaR2(lavaan::PoliticalDemocracy, model, "ALL")
+a <- deltaR2(lavaan::PoliticalDemocracy, model, "dem60")
+
+# test case 7
+source("./DeltaOptimal.R")
+a <- deltaR2.CI(lavaan::PoliticalDemocracy, model, R=10)
