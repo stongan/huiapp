@@ -1,5 +1,5 @@
 source("CONSTVal.R")
-
+#a
 #abc <- readModels("ex5.6.out")
 #
 #print (abc$parameters$unstandardized$est)
