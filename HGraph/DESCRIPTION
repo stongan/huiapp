@@ -1,0 +1,10 @@
+Package: HGraph
+Type: Package
+Title: Use Graph struct to travel
+Version: 0.1.0
+Author: HuiLi JinanPang
+Maintainer: Who to complain to <yourfault@somewhere.net>
+Description: It is used to travel graph
+License: GPL-2
+LazyData: FALSE
+RoxygenNote: 7.1.2

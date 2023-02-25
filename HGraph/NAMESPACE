@@ -1,0 +1,2 @@
+#exportPattern("^[[:alpha:]]+")
+export(get_graph_info)
